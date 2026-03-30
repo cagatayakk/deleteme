@@ -1,0 +1,21 @@
+node -e '
+fetch("https://api.mistral.ai/v1/embeddings", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer '"$MISTRAL_API_KEY"'",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "mistral-embed",
+    input: ["hello"]
+  })
+})
+.then(async r => {
+  console.log("status=", r.status);
+  console.log(await r.text());
+})
+.catch(err => {
+  console.error("FETCH_ERROR:", err);
+  process.exit(1);
+});
+'
