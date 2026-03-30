@@ -1,21 +1,35 @@
-node -e '
-fetch("https://api.mistral.ai/v1/embeddings", {
-  method: "POST",
-  headers: {
-    "Authorization": "Bearer '"$MISTRAL_API_KEY"'",
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    model: "mistral-embed",
-    input: ["hello"]
-  })
-})
-.then(async r => {
-  console.log("status=", r.status);
-  console.log(await r.text());
-})
-.catch(err => {
-  console.error("FETCH_ERROR:", err);
+const fetch = global.fetch;
+
+const apiKey = process.env.MISTRAL_API_KEY;
+
+if (!apiKey) {
+  console.error("MISTRAL_API_KEY env yok!");
   process.exit(1);
-});
-'
+}
+
+async function run() {
+  try {
+    const res = await fetch("https://api.mistral.ai/v1/embeddings", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "mistral-embed",
+        input: ["hello"]
+      })
+    });
+
+    console.log("STATUS:", res.status);
+
+    const text = await res.text();
+    console.log("RESPONSE:", text);
+
+  } catch (err) {
+    console.error("FETCH_ERROR:", err);
+    process.exit(1);
+  }
+}
+
+run();
